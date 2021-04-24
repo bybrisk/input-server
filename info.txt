@@ -1,0 +1,16 @@
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - https
+
+info:
+  description: Documentation for Bybrisk Intelligence API
+  title: Bybrisk Intelligence (BI) API
+  contact: {name: 'Shashank Prakash', url: 'http://csol99.blogspot.com', email: imctobybrisk@gmail.com}
+  version: 1.0.0,
+
+
+host: input.bybrisk.com
+basePath: /

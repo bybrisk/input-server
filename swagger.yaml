@@ -1,0 +1,175 @@
+definitions:
+  GenericError:
+    description: GenericError is a generic error message returned by a server
+    properties:
+      message:
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-package: github.com/bybrisk/input-register-api/handlers
+  RegisterPostSuccess:
+    description: post response
+    properties:
+      message:
+        description: Message response
+        type: string
+        x-go-name: Message
+      userID:
+        description: userID of the user
+        type: string
+        x-go-name: UserID
+    type: object
+    x-go-package: github.com/bybrisk/input-register-api/data
+  RegisterToBusinessPostSuccess:
+    description: post response
+    properties:
+      businessID:
+        description: businessID of the business
+        type: string
+        x-go-name: BusinessID
+      message:
+        description: Message response
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-package: github.com/bybrisk/input-register-api/data
+  RegisterUserStructure:
+    description: post request for registering a user
+    properties:
+      Address:
+        description: Complete address of the user
+        maxLength: 1000
+        type: string
+      Latitude:
+        description: Latitude of the customer
+        format: double
+        maxLength: 1000
+        type: number
+      Longitude:
+        description: Longitude of the customer
+        format: double
+        maxLength: 1000
+        type: number
+      PhoneNumber:
+        description: Phone number of the customer
+        maxLength: 1000
+        type: string
+      UserID:
+        description: UserID of the user (system generated. No need to provide)
+        maxLength: 1000
+        type: string
+      UserName:
+        description: The full Name of the user
+        maxLength: 1000
+        type: string
+    required:
+    - UserName
+    - PhoneNumber
+    - Address
+    - Latitude
+    - Longitude
+    type: object
+    x-go-package: github.com/bybrisk/input-register-api/data
+  RegisterUserToBusinessStruct:
+    description: post request for registering a user
+    properties:
+      BusinessID:
+        description: BusinessID of the business user is subscribing to
+        maxLength: 1000
+        type: string
+      UserID:
+        description: 'UserID of the user '
+        maxLength: 1000
+        type: string
+    required:
+    - UserID
+    - BusinessID
+    type: object
+    x-go-package: github.com/bybrisk/input-register-api/data
+  ValidationError:
+    description: ValidationError is a collection of validation error messages
+    properties:
+      messages:
+        items:
+          type: string
+        type: array
+        x-go-name: Messages
+    type: object
+    x-go-package: github.com/bybrisk/input-register-api/handlers
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - https
+
+info:
+  description: Documentation for Bybrisk Intelligence API
+  title: Bybrisk Intelligence (BI) API
+  contact: {name: 'Shashank Prakash', url: 'http://csol99.blogspot.com', email: imctobybrisk@gmail.com}
+  version: 1.0.0,
+
+
+host: input.bybrisk.com
+basePath: /
+paths:
+  /input/register/business:
+    post:
+      operationId: registerToBusiness
+      parameters:
+      - description: Data structure to register a user to a business.
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/RegisterUserToBusinessStruct'
+      responses:
+        "200":
+          $ref: '#/responses/registerToBusinessPostResponse'
+        "422":
+          $ref: '#/responses/errorValidation'
+        "501":
+          $ref: '#/responses/errorResponse'
+      summary: Subscribe a user to a business.
+      tags:
+      - user
+  /input/register/create:
+    post:
+      operationId: registerAUser
+      parameters:
+      - description: Data structure to register a user.
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/RegisterUserStructure'
+      responses:
+        "200":
+          $ref: '#/responses/registerPostResponse'
+        "422":
+          $ref: '#/responses/errorValidation'
+        "501":
+          $ref: '#/responses/errorResponse'
+      summary: Register a user to input tool.
+      tags:
+      - user
+responses:
+  errorResponse:
+    description: Generic error message returned as a string
+    schema:
+      $ref: '#/definitions/GenericError'
+  errorValidation:
+    description: Validation errors defined as an array of strings
+    schema:
+      $ref: '#/definitions/ValidationError'
+  noContentResponse:
+    description: No content is returned by this API endpoint
+  registerPostResponse:
+    description: Success message on a single user registeration
+    schema:
+      $ref: '#/definitions/RegisterPostSuccess'
+  registerToBusinessPostResponse:
+    description: Success message on subscribing to a business
+    schema:
+      $ref: '#/definitions/RegisterToBusinessPostSuccess'
+swagger: "2.0"
