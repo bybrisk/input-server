@@ -12,6 +12,10 @@ import (
 	"github.com/nicholasjackson/env"
 	"github.com/go-openapi/runtime/middleware"
 	input_registerHl "github.com/bybrisk/input-register-api/handlers"
+	input_convoHl "github.com/bybrisk/input-convo-starter-api/handlers"
+	input_actionHl "github.com/bybrisk/input-action-api/handlers"
+	input_archiveHl "github.com/bybrisk/input-archive-api/handlers"
+	input_schemaHl "github.com/bybrisk/input-schema-api/handlers"
 )
 
 func main() {
@@ -29,18 +33,32 @@ func main() {
 	
 	//registering all handlers
 	input_Register_Handler := input_registerHl.New_Input_Register(l)
+	input_Convo_Starter_Handler := input_convoHl.New_Input_Convo(l)
+	input_Action_Handler := input_actionHl.New_Input_Action(l)
+	input_Archive_Handler := input_archiveHl.New_Input_Archive(l)
+	input_Schema_Handler := input_schemaHl.New_Input_Schema(l)
+
 
 	serveMux := mux.NewRouter()
 
 	//Get Router
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
-	/*getRouter.HandleFunc("/account/{id}",accountHandler.GetAccountDetail)
-	getRouter.HandleFunc("/account/check/{username}",accountHandler.CheckAvailableUsername)*/
+	getRouter.HandleFunc("/user/{PhoneNumber}",input_Register_Handler.GetUserIDByPhone)
+	/*getRouter.HandleFunc("/account/check/{username}",accountHandler.CheckAvailableUsername)*/
 
 	//Post Router
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/input/register/create", input_Register_Handler.Register_User)
-	postRouter.HandleFunc("/input/register/business", input_Register_Handler.Subscribe_User)
+	postRouter.HandleFunc("/user/register", input_Register_Handler.Register_User)
+	postRouter.HandleFunc("/user/subscribe", input_Register_Handler.Subscribe_User)
+
+	postRouter.HandleFunc("/commence/get", input_Convo_Starter_Handler.Get_Conversation_Initials)
+	postRouter.HandleFunc("/commence/action", input_Convo_Starter_Handler.Get_Action_Handlers)
+
+	postRouter.HandleFunc("/action/order", input_Action_Handler.Make_Action_Order)
+
+	postRouter.HandleFunc("/archive/create", input_Archive_Handler.Create_Archive)
+	postRouter.HandleFunc("/archive/get/page", input_Archive_Handler.Get_Archive_Pagewise)
+	postRouter.HandleFunc("/schema/create", input_Schema_Handler.Create_Bot_Schema)
 
 	// handler for documentation
 	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"} 

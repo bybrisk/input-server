@@ -1,4 +1,197 @@
 definitions:
+  ActionHandlerRequest:
+    description: struct for getting the action handler request of a business
+    properties:
+      ActionHandler:
+        description: 'Action handler string '
+        maxLength: 1000
+        type: string
+      BusinessID:
+        description: BusinessID of the business user is subscribing to
+        maxLength: 1000
+        type: string
+      UserID:
+        description: 'UserID of the user '
+        maxLength: 1000
+        type: string
+    required:
+    - ActionHandler
+    - UserID
+    - BusinessID
+    type: object
+    x-go-package: github.com/bybrisk/input-convo-starter-api/data
+  ActionHandlerResponse:
+    description: struct for getting the action handler response of a business
+    properties:
+      ActionHandler:
+        description: Action handler
+        type: string
+      questionArray:
+        description: Question objects array
+        items:
+          $ref: '#/definitions/QuestionObjectArray'
+        type: array
+        x-go-name: QuestionArray
+      response:
+        description: API response message
+        type: string
+        x-go-name: Response
+      status:
+        description: status code
+        format: int64
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: github.com/bybrisk/input-convo-starter-api/data
+  ActionHandlersObject:
+    properties:
+      ActionHandler:
+        description: |-
+          Action Handler string
+          order
+          feedback
+          cancel
+        type: string
+      AddedActionHandler:
+        description: addedActionHandler after the transaction
+        items:
+          type: string
+        type: array
+      EndingMessage:
+        description: Transaction success response from business
+        type: string
+      questionArray:
+        description: Action Handler question object array
+        items:
+          $ref: '#/definitions/QuestionObjectArray'
+        type: array
+        x-go-name: QuestionArray
+    required:
+    - ActionHandler
+    - questionArray
+    type: object
+    x-go-package: github.com/bybrisk/input-schema-api/data
+  CreateArchiveRequest:
+    description: post request for creating archive of a transaction
+    properties:
+      ActionHandler:
+        description: The action handler in context to transaction
+        type: string
+      BusinessID:
+        description: BusinessID of the business user is subscribing to
+        maxLength: 1000
+        type: string
+      UserID:
+        description: 'UserID of the user '
+        maxLength: 1000
+        type: string
+      rankingIndex:
+        description: Ranking index of the transaction (provided by the server)
+        format: int64
+        maxLength: 1000
+        type: integer
+        x-go-name: RankingIndex
+      transactionDate:
+        description: Date the transaction took place (provided by the server)
+        maxLength: 1000
+        type: string
+        x-go-name: TransactionDate
+      transactionObject:
+        description: Transaction object to be sent as a payload
+        items:
+          $ref: '#/definitions/TransactionBlock'
+        type: array
+        x-go-name: TransactionObject
+    required:
+    - UserID
+    - BusinessID
+    - ActionHandler
+    - transactionObject
+    type: object
+    x-go-package: github.com/bybrisk/input-archive-api/data
+  CreateArchiveResponse:
+    description: response after archiving a transaction
+    properties:
+      response:
+        description: Response message
+        type: string
+        x-go-name: Response
+      status:
+        description: status code
+        format: int64
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: github.com/bybrisk/input-archive-api/data
+  CreateSchemaRequest:
+    description: post request for creating a schema
+    properties:
+      ActionHandlersObjectArray:
+        description: Action Handlers object along with the details
+        items:
+          $ref: '#/definitions/ActionHandlersObject'
+        type: array
+      BusinessID:
+        description: BusinessID of the business this schema is for
+        maxLength: 1000
+        type: string
+      greetingBottomRightData:
+        description: Bottom Right Data of the greeting card (if some additional data)
+        maxLength: 10
+        type: string
+        x-go-name: GreetingBottomRightData
+      greetingCardPicURL:
+        description: URL of Greeting card pic
+        type: string
+        x-go-name: GreetingCardPicURL
+      greetingStory:
+        description: Greeting message for the user
+        type: string
+        x-go-name: GreetingStory
+      greetingSubtitle:
+        description: Subtitle of the greeting card (Mostly business vertical)
+        type: string
+        x-go-name: GreetingSubTitle
+      greetingTitle:
+        description: Title of the greeting card the business wants the user to see (Mostly the name of the business)
+        type: string
+        x-go-name: GreetingTitle
+      greetingTopRightData:
+        description: Top right data on the greeting card (if some additional data)
+        maxLength: 10
+        type: string
+        x-go-name: GreetingTopRightData
+    required:
+    - BusinessID
+    - greetingStory
+    - ActionHandlersObjectArray
+    - greetingTitle
+    type: object
+    x-go-package: github.com/bybrisk/input-schema-api/data
+  CreateSchemaResponse:
+    description: post response for creating a schema
+    properties:
+      BusinessID:
+        description: BusinessID of the business
+        type: string
+      message:
+        description: Message response
+        type: string
+        x-go-name: Message
+      status:
+        description: |-
+          status code
+          200 Success
+          401 Request Error
+          501 Server Error
+          502 Database Error
+        format: int64
+        type: integer
+        x-go-name: Status
+    required:
+    - BusinessID
+    type: object
+    x-go-package: github.com/bybrisk/input-schema-api/data
   GenericError:
     description: GenericError is a generic error message returned by a server
     properties:
@@ -6,14 +199,273 @@ definitions:
         type: string
         x-go-name: Message
     type: object
-    x-go-package: github.com/bybrisk/input-register-api/handlers
+    x-go-package: github.com/bybrisk/input-schema-api/handlers
+  GetArchiveRequestPagewise:
+    description: Post request to get archive pagewise
+    properties:
+      BusinessID:
+        description: BusinessID of the business user is subscribing to
+        maxLength: 1000
+        type: string
+      UserID:
+        description: 'UserID of the user '
+        maxLength: 1000
+        type: string
+      page:
+        description: Page requested (must start with 1)
+        format: int64
+        type: integer
+        x-go-name: Page
+    required:
+    - UserID
+    - BusinessID
+    - page
+    type: object
+    x-go-package: github.com/bybrisk/input-archive-api/data
+  GetArchiveResponsePagewise:
+    description: Post response to get archive pagewise
+    properties:
+      data:
+        $ref: '#/definitions/PagewiseArchiveReponseFromDB'
+      response:
+        description: Response message
+        type: string
+        x-go-name: Response
+      status:
+        description: status code
+        format: int64
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: github.com/bybrisk/input-archive-api/data
+  IdOfDoc:
+    properties:
+      address:
+        description: Registered address if the user
+        type: string
+        x-go-name: Address
+      latitude:
+        description: Registeredlatitude of the user
+        format: double
+        type: number
+        x-go-name: Latitude
+      longitude:
+        description: Registered longitude of the user
+        format: double
+        type: number
+        x-go-name: Longitude
+      phonenumber:
+        description: registered phone number of the user
+        type: string
+        x-go-name: PhoneNumber
+      subscription:
+        description: Details of the subcription
+        items:
+          $ref: '#/definitions/SubscriptionStruct'
+        type: array
+        x-go-name: Subscription
+      username:
+        description: Registered name of the user
+        type: string
+        x-go-name: UserName
+    type: object
+    x-go-package: github.com/bybrisk/input-register-api/data
+  InitialConversationRequest:
+    description: post request for getting the inital conversation of a business
+    properties:
+      BusinessID:
+        description: BusinessID of the business user is subscribing to
+        maxLength: 1000
+        type: string
+      UserID:
+        description: 'UserID of the user '
+        maxLength: 1000
+        type: string
+    required:
+    - UserID
+    - BusinessID
+    type: object
+    x-go-package: github.com/bybrisk/input-convo-starter-api/data
+  InitialConversationResponse:
+    description: post request for registering a user
+    properties:
+      ActionHandlers:
+        description: The action handler which decides which API to fire
+        items:
+          type: string
+        type: array
+      Message:
+        description: Message the business wants the user to see.
+        type: string
+      qCard:
+        $ref: '#/definitions/cardObject'
+      response:
+        description: Response message
+        type: string
+        x-go-name: Response
+      status:
+        description: status code
+        format: int64
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: github.com/bybrisk/input-convo-starter-api/data
+  OrderAPIRequest:
+    description: post request for calling the Order API
+    properties:
+      BusinessID:
+        description: BusinessID of the business under context
+        maxLength: 1000
+        type: string
+      UserID:
+        description: 'UserID of the user '
+        maxLength: 1000
+        type: string
+      amount:
+        description: Amount of the transaction (if any)
+        format: double
+        type: number
+        x-go-name: Amount
+      customerAddress:
+        description: 'User Address '
+        type: string
+        x-go-name: CustomerAddress
+      customerName:
+        description: Name of the user
+        type: string
+        x-go-name: CustomerName
+      itemWeight:
+        description: Weight of the order (if not provided then use 1 as default)
+        format: double
+        type: number
+        x-go-name: ItemWeight
+      latitude:
+        description: Latitude of the user
+        format: double
+        type: number
+        x-go-name: Latitude
+      longitude:
+        description: Longitude of the user
+        format: double
+        type: number
+        x-go-name: Longitude
+      note:
+        description: Note from the user
+        type: string
+        x-go-name: Note
+      paymentStatus:
+        description: Status of payment (if amount is not provided then set this to true)
+        format: double
+        type: number
+        x-go-name: PaymentStatus
+      phone:
+        description: Phone number of the user
+        type: string
+        x-go-name: Phone
+    required:
+    - UserID
+    - BusinessID
+    - customerAddress
+    - customerName
+    - itemWeight
+    - latitude
+    - longitude
+    - phone
+    type: object
+    x-go-package: github.com/bybrisk/input-action-api/data
+  OrderAPIResponse:
+    description: response for calling Order API
+    properties:
+      Message:
+        description: Message the business wants the user to see.
+        type: string
+      response:
+        description: Response message
+        type: string
+        x-go-name: Response
+      status:
+        description: Status code
+        format: int64
+        type: integer
+        x-go-name: Status
+    type: object
+    x-go-package: github.com/bybrisk/input-action-api/data
+  PagewiseArchiveReponseFromDB:
+    properties:
+      rankingIndex:
+        description: Ranking index of the transaction
+        format: int64
+        type: integer
+        x-go-name: RankingIndex
+      transactionDate:
+        description: Date the transaction took place
+        type: string
+        x-go-name: TransactionDate
+      transactionObject:
+        description: Transaction array of objects
+        items:
+          properties:
+            bot:
+              description: Response of bot in a block of transaction
+              type: string
+              x-go-name: Bot
+            user:
+              description: Response of user in a block of transaction (NULL for a terminating block)
+              type: string
+              x-go-name: User
+          type: object
+        type: array
+        x-go-name: TransactionObject
+    type: object
+    x-go-package: github.com/bybrisk/input-archive-api/data
+  QuestionObjectArray:
+    properties:
+      answerCard:
+        description: Card object for the answer
+        items:
+          $ref: '#/definitions/cardObject'
+        type: array
+        x-go-name: AnswerCard
+      customResponseChoice:
+        description: Choice of response provided by the business
+        items:
+          type: string
+        type: array
+        x-go-name: CustomResponseChoice
+      question:
+        description: Question to be displayed
+        type: string
+        x-go-name: Question
+      questionCard:
+        $ref: '#/definitions/cardObject'
+      questionContext:
+        description: Context of the question (helps to prepare the payload)
+        type: string
+        x-go-name: QuestionContext
+      questionType:
+        description: Type of question bot asks Text Card
+        type: string
+        x-go-name: QuestionType
+      responseType:
+        description: Type of response expected (needed for setting the UI)
+        type: string
+        x-go-name: ResponseType
+    type: object
+    x-go-package: github.com/bybrisk/input-convo-starter-api/data
   RegisterPostSuccess:
     description: post response
     properties:
+      data:
+        $ref: '#/definitions/IdOfDoc'
       message:
         description: Message response
         type: string
         x-go-name: Message
+      status:
+        description: status code
+        format: int64
+        type: integer
+        x-go-name: Status
       userID:
         description: userID of the user
         type: string
@@ -27,10 +479,17 @@ definitions:
         description: businessID of the business
         type: string
         x-go-name: BusinessID
+      detail:
+        $ref: '#/definitions/SubscriptionStruct'
       message:
         description: Message response
         type: string
         x-go-name: Message
+      status:
+        description: status code
+        format: int64
+        type: integer
+        x-go-name: Status
     type: object
     x-go-package: github.com/bybrisk/input-register-api/data
   RegisterUserStructure:
@@ -55,7 +514,7 @@ definitions:
         maxLength: 1000
         type: string
       UserID:
-        description: UserID of the user (system generated. No need to provide)
+        description: UserID of the user
         maxLength: 1000
         type: string
       UserName:
@@ -63,6 +522,7 @@ definitions:
         maxLength: 1000
         type: string
     required:
+    - UserID
     - UserName
     - PhoneNumber
     - Address
@@ -86,6 +546,59 @@ definitions:
     - BusinessID
     type: object
     x-go-package: github.com/bybrisk/input-register-api/data
+  SubscriptionStruct:
+    properties:
+      address:
+        description: Address of the business
+        type: string
+        x-go-name: Address
+      businesscategory:
+        description: Category of the business
+        type: string
+        x-go-name: BusinessCategory
+      businessid:
+        description: BusinessID of the business
+        type: string
+        x-go-name: BusinessID
+      businessname:
+        description: Name of the business
+        type: string
+        x-go-name: BusinessName
+      email:
+        description: Email of the business
+        type: string
+        x-go-name: Email
+      latitude:
+        description: Latitude of the business
+        format: double
+        type: number
+        x-go-name: Latitude
+      longitude:
+        description: Longitude of the business
+        format: double
+        type: number
+        x-go-name: Longitude
+      picurl:
+        description: Url of the display profile of the business
+        type: string
+        x-go-name: Picurl
+    type: object
+    x-go-package: github.com/bybrisk/input-register-api/data
+  TransactionBlock:
+    properties:
+      bot:
+        description: Response of bot in a block of transaction
+        type: string
+        x-go-name: Bot
+      user:
+        description: Response of user in a block of transaction (NULL for a terminating block)
+        type: string
+        x-go-name: User
+    required:
+    - bot
+    - user
+    type: object
+    x-go-package: github.com/bybrisk/input-archive-api/data
   ValidationError:
     description: ValidationError is a collection of validation error messages
     properties:
@@ -95,7 +608,35 @@ definitions:
         type: array
         x-go-name: Messages
     type: object
-    x-go-package: github.com/bybrisk/input-register-api/handlers
+    x-go-package: github.com/bybrisk/input-schema-api/handlers
+  cardObject:
+    properties:
+      bottomRightData:
+        description: Bottom Right Data of the card
+        type: string
+        x-go-name: BottomRightData
+      cardPic:
+        description: URL of the pic on the card
+        type: string
+        x-go-name: CardPic
+      story:
+        description: Story on the card
+        type: string
+        x-go-name: Story
+      subtitle:
+        description: Subtitle of the card
+        type: string
+        x-go-name: SubTitle
+      title:
+        description: Card title
+        type: string
+        x-go-name: Title
+      topRightData:
+        description: Top right data on the card
+        type: string
+        x-go-name: TopRightData
+    type: object
+    x-go-package: github.com/bybrisk/input-convo-starter-api/data
 consumes:
   - application/json
 produces:
@@ -113,27 +654,140 @@ info:
 host: input.bybrisk.com
 basePath: /
 paths:
-  /input/register/business:
+  /action/order:
     post:
-      operationId: registerToBusiness
+      operationId: order
       parameters:
-      - description: Data structure to register a user to a business.
+      - description: Data structure for the payload of the Order API
         in: body
         name: Body
         required: true
         schema:
-          $ref: '#/definitions/RegisterUserToBusinessStruct'
+          $ref: '#/definitions/OrderAPIRequest'
       responses:
         "200":
-          $ref: '#/responses/registerToBusinessPostResponse'
+          $ref: '#/responses/orderAPIResponse'
         "422":
           $ref: '#/responses/errorValidation'
         "501":
           $ref: '#/responses/errorResponse'
-      summary: Subscribe a user to a business.
+      summary: Call the order API from action module.
+      tags:
+      - action
+  /archive/create:
+    post:
+      operationId: createNewArchive
+      parameters:
+      - description: Data structure to create an archive of a transaction
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/CreateArchiveRequest'
+      responses:
+        "200":
+          $ref: '#/responses/createArchiveResponse'
+        "422":
+          $ref: '#/responses/errorValidation'
+        "501":
+          $ref: '#/responses/errorResponse'
+      summary: Save a transaction to archive for future reference.
+      tags:
+      - archive
+  /archive/get/page:
+    post:
+      description: Get transaction archive pagewise (per transaction)
+      operationId: getArchivePagewise
+      parameters:
+      - description: Data structure to fetch archives pagewise
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/GetArchiveRequestPagewise'
+      responses:
+        "200":
+          $ref: '#/responses/getArchiveResponsePagewise'
+        "422":
+          $ref: '#/responses/errorValidation'
+        "501":
+          $ref: '#/responses/errorResponses'
+      tags:
+      - archive
+  /commence/action:
+    post:
+      operationId: getActionHandlers
+      parameters:
+      - description: Data structure to get questions for a specific action handler
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/ActionHandlerRequest'
+      responses:
+        "200":
+          $ref: '#/responses/actionHandlersResponse'
+        "422":
+          $ref: '#/responses/errorValidation'
+        "501":
+          $ref: '#/responses/errorResponse'
+      summary: Get the action handlers for the business.
+      tags:
+      - commence
+  /commence/get:
+    post:
+      operationId: startAConversation
+      parameters:
+      - description: Data structure to get intial conversation of any business
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/InitialConversationRequest'
+      responses:
+        "200":
+          $ref: '#/responses/intialConversationResponse'
+        "422":
+          $ref: '#/responses/errorValidation'
+        "501":
+          $ref: '#/responses/errorResponse'
+      summary: Get the conversation starting data for a business.
+      tags:
+      - commence
+  /schema/create:
+    post:
+      description: 'Create a bot schema for a business '
+      operationId: createSchema
+      parameters:
+      - description: Data structure to create a bot schema for a business.
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/CreateSchemaRequest'
+      responses:
+        "200":
+          $ref: '#/responses/createSchemaResponse'
+        "422":
+          $ref: '#/responses/errorValidation'
+        "501":
+          $ref: '#/responses/errorResponse'
+      tags:
+      - schema
+  /user/{PhoneNumber}:
+    get:
+      operationId: getUserIDByPhone
+      responses:
+        "200":
+          $ref: '#/responses/registerPostResponse'
+        "422":
+          $ref: '#/responses/errorValidation'
+        "501":
+          $ref: '#/responses/errorResponse'
+      summary: Get userID or create UserID if not registered.
       tags:
       - user
-  /input/register/create:
+  /user/register:
     post:
       operationId: registerAUser
       parameters:
@@ -153,7 +807,39 @@ paths:
       summary: Register a user to input tool.
       tags:
       - user
+  /user/subscribe:
+    post:
+      operationId: registerToBusiness
+      parameters:
+      - description: Data structure to register a user to a business.
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/RegisterUserToBusinessStruct'
+      responses:
+        "200":
+          $ref: '#/responses/registerToBusinessPostResponse'
+        "422":
+          $ref: '#/responses/errorValidation'
+        "501":
+          $ref: '#/responses/errorResponse'
+      summary: Subscribe a user to a business.
+      tags:
+      - user
 responses:
+  actionHandlersResponse:
+    description: Response of the questions for a specific action handler
+    schema:
+      $ref: '#/definitions/ActionHandlerResponse'
+  createArchiveResponse:
+    description: Message on creating archive of a transaction.
+    schema:
+      $ref: '#/definitions/CreateArchiveResponse'
+  createSchemaResponse:
+    description: Success message on creating a bot schema for a business
+    schema:
+      $ref: '#/definitions/CreateSchemaResponse'
   errorResponse:
     description: Generic error message returned as a string
     schema:
@@ -162,8 +848,20 @@ responses:
     description: Validation errors defined as an array of strings
     schema:
       $ref: '#/definitions/ValidationError'
+  getArchiveResponsePagewise:
+    description: Message on getting archives pagewise.
+    schema:
+      $ref: '#/definitions/GetArchiveResponsePagewise'
+  intialConversationResponse:
+    description: Message on fetching intial conversation for a business
+    schema:
+      $ref: '#/definitions/InitialConversationResponse'
   noContentResponse:
     description: No content is returned by this API endpoint
+  orderAPIResponse:
+    description: Response for the order API
+    schema:
+      $ref: '#/definitions/OrderAPIResponse'
   registerPostResponse:
     description: Success message on a single user registeration
     schema:
